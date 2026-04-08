@@ -4,8 +4,13 @@ set -euo pipefail
 
 root="/home/jumski/Code/jumski/opencode-supabase-consumer"
 tmp="${TMPDIR:-/tmp}/opencode-isolated-$USER"
+log_dir="$root/logs"
+log_file="$log_dir/opencode-isolated-$(date +%Y%m%d-%H%M%S).log"
 
 mkdir -p "$tmp/.config" "$tmp/.local/share" "$tmp/.cache" "$tmp/.local/state"
+mkdir -p "$log_dir"
+
+printf 'writing log to %s\n' "$log_file"
 
 env \
   HOME="$tmp" \
@@ -15,4 +20,4 @@ env \
   XDG_STATE_HOME="$tmp/.local/state" \
   OPENCODE_CONFIG_DIR="$root/.opencode" \
   OPENCODE_DISABLE_PROJECT_CONFIG=1 \
-  opencode --print-logs "$@"
+  opencode --print-logs "$@" 2>&1 | tee "$log_file"
